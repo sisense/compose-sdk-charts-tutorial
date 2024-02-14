@@ -17,6 +17,7 @@ const productCategories = [
 
 function App() {
   const [categories, setCategories] = useState<string[]>([]);
+  const [breakBy, setBreakBy] = useState('color');
   const chartFilters = useMemo(
     () =>
       categories
@@ -30,6 +31,23 @@ function App() {
     newCategories: string[]
   ) => {
     setCategories(newCategories);
+  };
+
+  const handleBreakChange = (
+    _event: React.MouseEvent<HTMLElement>,
+    newBreak: string
+  ) => {
+    setBreakBy(newBreak);
+  };
+
+  const breakStringToColumn = (breakString: string) => {
+    if (breakString === 'manager') {
+      return DM.DimEmployees.TeamManger;
+    } else if (breakString === 'region') {
+      return DM.DimCountries.Region;
+    } else {
+      return DM.DimProducts.Color;
+    }
   };
 
   return (
@@ -84,7 +102,7 @@ function App() {
         dataOptions={{
           category: [DM.DimProducts.CategoryName],
           value: [measureFactory.sum(DM.Fact_Sale_orders.OrderRevenue)],
-          breakBy: [DM.DimProducts.Color],
+          breakBy: [breakStringToColumn(breakBy)],
           seriesToColorMap: {
             Black: '#1b1b1b',
             Blue: '#0000cd',
@@ -92,6 +110,8 @@ function App() {
             Red: '#ce2029',
             Silver: '#acacac',
             Yellow: '#eee600',
+            USA: '#00008b',
+            Europe: '#dc143c',
           },
         }}
         filters={chartFilters}
@@ -111,6 +131,17 @@ function App() {
           height: 400,
         }}
       />
+      <ToggleButtonGroup value={breakBy} onChange={handleBreakChange} exclusive>
+        <ToggleButton key={'color'} value={'color'}>
+          Color
+        </ToggleButton>
+        <ToggleButton key={'region'} value={'region'}>
+          Region
+        </ToggleButton>
+        <ToggleButton key={'manager'} value={'manager'}>
+          Team Manager
+        </ToggleButton>
+      </ToggleButtonGroup>
     </>
   );
 }
