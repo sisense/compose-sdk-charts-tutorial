@@ -1,25 +1,46 @@
 import './App.css';
 import { Chart, MemberFilterTile } from '@sisense/sdk-ui';
-import { Filter, measureFactory } from '@sisense/sdk-data';
+import { filterFactory, measureFactory } from '@sisense/sdk-data';
 import * as DM from './models/sample-retail';
 import { useMemo, useState } from 'react';
+import { ToggleButton, ToggleButtonGroup } from '@mui/material';
+
+const productCategories = [
+  'Bikes',
+  'Body Armor',
+  'Build Kits',
+  'Cables & Housing',
+  'Frames',
+  'Helmets',
+  'Wheels & Wheelsets',
+];
 
 function App() {
-  const [categoryFilter, setCategoryFilter] = useState<Filter | null>(null);
+  const [categories, setCategories] = useState<string[]>();
   const chartFilters = useMemo(
-    () => (categoryFilter ? [categoryFilter] : []),
-    [categoryFilter]
+    () =>
+      categories
+        ? [filterFactory.members(DM.DimProducts.CategoryName, categories)]
+        : [],
+    [categories]
   );
+
+  const handleCategoryChange = (
+    _event: React.MouseEvent<HTMLElement>,
+    newCategories: string[]
+  ) => {
+    setCategories(newCategories);
+  };
 
   return (
     <>
-      <MemberFilterTile
-        title={'Category'}
-        dataSource={DM.DataSource}
-        attribute={DM.DimProducts.CategoryName}
-        filter={categoryFilter}
-        onChange={setCategoryFilter}
-      />
+      <ToggleButtonGroup value={categories} onChange={handleCategoryChange}>
+        {productCategories.map((productCategory) => (
+          <ToggleButton key={productCategory} value={productCategory}>
+            {productCategory}
+          </ToggleButton>
+        ))}
+      </ToggleButtonGroup>
       <Chart
         dataSet={DM.DataSource}
         chartType={'column'}
