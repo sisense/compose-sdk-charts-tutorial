@@ -1,9 +1,15 @@
 import './App.css';
-import { Chart, DataPoint, HighchartsOptions } from '@sisense/sdk-ui';
+import {
+  Chart,
+  ChartType,
+  DataPoint,
+  HighchartsOptions,
+} from '@sisense/sdk-ui';
 import { filterFactory, measureFactory } from '@sisense/sdk-data';
 import * as DM from './models/sample-retail';
 import { useMemo, useState } from 'react';
 import { ToggleButton, ToggleButtonGroup } from '@mui/material';
+import BarChartIcon from '@mui/icons-material/BarChart';
 
 const productCategories = [
   'Bikes',
@@ -18,6 +24,7 @@ const productCategories = [
 function App() {
   const [categories, setCategories] = useState<string[]>([]);
   const [breakBy, setBreakBy] = useState('color');
+  const [chartType, setChartType] = useState<ChartType>('column');
   const chartFilters = useMemo(
     () =>
       categories
@@ -38,6 +45,13 @@ function App() {
     newBreak: string
   ) => {
     setBreakBy(newBreak);
+  };
+
+  const handleTypeChange = (
+    _event: React.MouseEvent<HTMLElement>,
+    newType: ChartType
+  ) => {
+    if (newType) setChartType(newType);
   };
 
   const breakStringToColumn = (breakString: string) => {
@@ -61,7 +75,7 @@ function App() {
       </ToggleButtonGroup>
       <Chart
         dataSet={DM.DataSource}
-        chartType={'column'}
+        chartType={chartType}
         dataOptions={{
           category: [DM.DimProducts.CategoryName],
           value: [
@@ -96,9 +110,21 @@ function App() {
           height: 400,
         }}
       />
+      <ToggleButtonGroup
+        value={chartType}
+        onChange={handleTypeChange}
+        exclusive
+      >
+        <ToggleButton key={'column'} value={'column'}>
+          <BarChartIcon />
+        </ToggleButton>
+        <ToggleButton key={'bar'} value={'bar'}>
+          <BarChartIcon style={{ transform: 'rotate(90deg)' }} />
+        </ToggleButton>
+      </ToggleButtonGroup>
       <Chart
         dataSet={DM.DataSource}
-        chartType={'column'}
+        chartType={chartType}
         dataOptions={{
           category: [DM.DimProducts.CategoryName],
           value: [measureFactory.sum(DM.Fact_Sale_orders.OrderRevenue)],
