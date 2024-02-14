@@ -38,6 +38,15 @@ function App() {
         dataOptions={{
           category: [DM.DimProducts.CategoryName],
           value: [measureFactory.sum(DM.Fact_Sale_orders.OrderRevenue)],
+          breakBy: [DM.DimProducts.Color],
+          seriesToColorMap: {
+            Black: '#1b1b1b',
+            Blue: '#0000cd',
+            Gold: '#fcc200',
+            Red: '#ce2029',
+            Silver: '#acacac',
+            Yellow: '#eee600',
+          },
         }}
         styleOptions={{
           width: 1000,
