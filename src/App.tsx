@@ -1,5 +1,5 @@
 import './App.css';
-import { Chart, MemberFilterTile } from '@sisense/sdk-ui';
+import { Chart } from '@sisense/sdk-ui';
 import { filterFactory, measureFactory } from '@sisense/sdk-data';
 import * as DM from './models/sample-retail';
 import { useMemo, useState } from 'react';
@@ -16,7 +16,7 @@ const productCategories = [
 ];
 
 function App() {
-  const [categories, setCategories] = useState<string[]>();
+  const [categories, setCategories] = useState<string[]>([]);
   const chartFilters = useMemo(
     () =>
       categories
