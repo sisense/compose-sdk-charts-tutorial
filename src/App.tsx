@@ -1,5 +1,5 @@
 import './App.css';
-import { Chart, MemberFilterTile } from '@sisense/sdk-ui';
+import { Chart, HighchartsOptions, MemberFilterTile } from '@sisense/sdk-ui';
 import { filterFactory, measureFactory } from '@sisense/sdk-data';
 import * as DM from './models/sample-retail';
 import { useMemo, useState } from 'react';
@@ -54,6 +54,17 @@ function App() {
           ],
         }}
         highlights={chartFilters}
+        onBeforeRender={(options: HighchartsOptions) => {
+          if (options.tooltip) {
+            options.tooltip.formatter = function () {
+              const value = (
+                this.y && this.y !== 0 ? this.y / 1000 : 0
+              ).toFixed(1);
+              return `${this.x}: <b>${value}K</b>`;
+            };
+          }
+          return options;
+        }}
         styleOptions={{
           width: 1000,
           height: 400,
@@ -76,6 +87,17 @@ function App() {
           },
         }}
         filters={chartFilters}
+        onBeforeRender={(options: HighchartsOptions) => {
+          if (options.tooltip) {
+            options.tooltip.formatter = function () {
+              const value = (
+                this.y && this.y !== 0 ? this.y / 1000 : 0
+              ).toFixed(1);
+              return `${this.x} - ${this.series.name}: <b>${value}K</b>`;
+            };
+          }
+          return options;
+        }}
         styleOptions={{
           width: 1000,
           height: 400,
