@@ -1,5 +1,5 @@
 import './App.css';
-import { Chart, HighchartsOptions, MemberFilterTile } from '@sisense/sdk-ui';
+import { Chart, DataPoint, HighchartsOptions } from '@sisense/sdk-ui';
 import { filterFactory, measureFactory } from '@sisense/sdk-data';
 import * as DM from './models/sample-retail';
 import { useMemo, useState } from 'react';
@@ -16,7 +16,7 @@ const productCategories = [
 ];
 
 function App() {
-  const [categories, setCategories] = useState<string[]>();
+  const [categories, setCategories] = useState<string[]>([]);
   const chartFilters = useMemo(
     () =>
       categories
@@ -64,6 +64,14 @@ function App() {
             };
           }
           return options;
+        }}
+        onDataPointClick={(point: DataPoint) => {
+          const category = point.categoryValue as string;
+          setCategories((categories) =>
+            categories.includes(category)
+              ? categories.filter((item) => item !== (category as string))
+              : [...categories, category as string]
+          );
         }}
         styleOptions={{
           width: 1000,
